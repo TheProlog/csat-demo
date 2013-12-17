@@ -27,6 +27,12 @@ group :development, :test do
   gem 'rspec-rails'
   gem 'rspec-html-matchers'
   gem 'rspec-http'
+  gem 'tapout'
+  gem 'teaspoon'
+end
+
+group :development do
+  gem 'rubocop'
 end
 
 gem 'jquery-rails'

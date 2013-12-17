@@ -13,4 +13,6 @@
 //= require jquery
 //= require jquery_ujs
 //= require bootstrap
+//= require ba-debug-min
+//= require mootools-core-1.4.5-full-compat-yc
 //= require_tree .
