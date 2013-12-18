@@ -35,6 +35,11 @@ group :development do
   gem 'rubocop'
 end
 
+group :test do
+  gem 'capybara'
+end
+
+gem 'haml-rails'
 gem 'jquery-rails'
 
 # To use ActiveModel has_secure_password
