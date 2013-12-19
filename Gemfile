@@ -29,10 +29,14 @@ group :development, :test do
   gem 'rspec-http'
   gem 'tapout'
   gem 'teaspoon'
+  gem 'pry'
+  gem 'pry-rails'
 end
 
 group :development do
   gem 'rubocop'
+  gem 'spring'
+  gem 'spring-commands-rspec'
 end
 
 group :test do

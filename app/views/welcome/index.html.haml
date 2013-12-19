@@ -1,2 +1,73 @@
-%h1 Welcome#index
-%p Find me in app/views/welcome/index.html.haml
+.page-header.row
+  %h1 CSAT Demo
+  %p Demonstrates content-selection automated testing for our app.
+  %p
+    Specifically, defining a selection in terms of its endpoints, and defining
+    those in terms of an unambiguous selector, a node index and a text offset.
+
+.page-content
+  .row
+    %form
+      .col-md-5
+        .panel.panel-default
+          .panel-heading
+            %h2.panel-title Selection Start
+          .panel-body
+            .input-group
+              %span.input-group-addon Selector
+              %input.form-control{type: "text", id: "start_selector"}
+            .input-group
+              %span.input-group-addon Node Index
+              %input.form-control{type: "number", id: "start_nodeindex"}
+            .input-group
+              %span.input-group-addon Text Offset
+              %input.form-control{type: "number", id: "start_textoffset"}
+
+      .col-md-5
+        .panel.panel-default
+          .panel-heading
+            %h2.panel-title Selection End
+          .panel-body
+            .input-group
+              %span.input-group-addon Selector
+              %input.form-control{type: "text", id: "end_selector"}
+            .input-group
+              %span.input-group-addon Node Index
+              %input.form-control{type: "number", id: "end_nodeindex"}
+            .input-group
+              %span.input-group-addon Text Offset
+              %input.form-control{type: "number", id: "end_textoffset"}
+
+      .col-md-2
+        %button.btn.btn-primary{type: 'submit'} Select
+
+  .row.well.well-sm
+    %h2 Content affected by the selection is below.
+    /
+      Courtesy of the Google Web Style Guide, 3rd edition, by Patrick J Lynch
+      and Sarah Horton; adapted from
+      http://www.webstyleguide.com/wsg3/5-site-structure/2-semantic-markup.html
+  .row
+    .col-md-12.boilerplate
+      %h1 This is the most important headline
+      %p
+        This is ordinary paragraph text within the body of the document, where
+        certain words and phrases may be <em>emphasized</em> to mark them as
+        %strong>
+          particularly important
+        \.
+      %h2 This is a headline of secondary importance to the headline above
+      %p
+        Any time you list related things, the items should be marked up in the
+        form of a list:
+      %ul
+        %li<
+          A list signals that a group of items are conceptually related to each
+          other
+        %li<
+          Lists may be ordered (numbered or alphabetic) or unordered (bulleted
+          items)
+        %li<
+          Lists may also be menus or lists of links for navigation
+        %li<
+          Cascading Style Sheets can make lists look many different ways
