@@ -74,7 +74,7 @@ describe 'User visits landing page' do
           it 'contains a form element' do
             expect(@children.first.name).to eq 'form'
           end
-          
+
           describe 'contains a form element that' do
 
             before :each do
@@ -122,7 +122,8 @@ describe 'User visits landing page' do
 
           it 'is a small "well"-styled row div' do
             classes = @row['class'].split ' '
-            ['row', 'well-sm', 'well'].each do |klass|
+            %w(row well-sm well).each do |klass|
+            # ['row', 'well-sm', 'well'].each do |klass|
               expect(classes).to include klass
             end
           end

@@ -8,7 +8,6 @@ gem 'rails', '3.2.16'
 
 gem 'sqlite3'
 
-
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -31,6 +30,7 @@ group :development, :test do
   gem 'teaspoon'
   gem 'pry'
   gem 'pry-rails'
+  gem 'selenium-webdriver'
 end
 
 group :development do
@@ -45,6 +45,7 @@ end
 
 gem 'haml-rails'
 gem 'jquery-rails'
+gem 'thin'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
