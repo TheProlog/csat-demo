@@ -5,6 +5,8 @@ describe 'InitSelectorSelectControl class', ->
 
   beforeEach ->
     @klass = window.meldd_gateway.use 'InitSelectorSelectControl'
+    html = '<div id="content"><p>This is a test.</p></div>'
+    fixture.set html
 
   describe 'has an API that includes', ->
 
@@ -17,5 +19,12 @@ describe 'InitSelectorSelectControl class', ->
       expect(obj.setup).to.be.a 'function'
       expect(obj.setup.length).to.be 1
 
-  it 'needs specs to cover the "setp" method'
+  describe 'the setup method', ->
+
+    it 'returns a null value', ->
+      obj = new @klass()
+      selector = 'p:nth-child(1)'
+      expect(obj.setup({selector})).to.be null
+
+  it 'needs more specs to cover the "setup" method'
 

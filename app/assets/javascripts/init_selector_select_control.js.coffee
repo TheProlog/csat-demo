@@ -60,4 +60,4 @@ window.meldd_gateway.register 'InitSelectorSelectControl', class
     parse_params.call @, params
     selectors = getSelectorCollection.call @
     addSelectorsToControl(@selector, selectors).change @, changeHandler
-    @
+    null
