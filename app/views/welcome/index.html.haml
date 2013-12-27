@@ -19,7 +19,7 @@
             .form-group
               %label{for: 'start_nodeindex'} Node Index
               %input#start_nodeindex{type: 'number',
-                  class: 'form-control',
+                  class: 'form-control validate[required,funcCall[window.checkNodeIndex]',
                   name: 'start-nodeindex'}
             .form-group
               %label{or: 'start_textoffset'} Text Offset
@@ -37,7 +37,7 @@
             .form-group
               %label{for: 'end_nodeindex'} Node Index
               %input#end_nodeindex{type: 'number',
-                  class: 'form-control',
+                  class: 'form-control validate[required,funcCall[window.checkNodeIndex]',
                   name: 'end-nodeindex'}
             .form-group
               %label{or: 'end_textoffset'} Text Offset
