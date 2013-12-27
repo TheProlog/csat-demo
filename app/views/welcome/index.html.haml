@@ -17,14 +17,17 @@
               %label{for: 'start_selector'} Selector
               %select#start_selector
             .form-group
-              %label{for: 'start_nodeindex'} Node Index
+              %label{for: 'start_nodeindex'}
+                Node Index
+                %strong (includes child element nodes!)
               %input#start_nodeindex{type: 'number',
                   class: 'form-control validate[required,funcCall[window.checkNodeIndex]',
                   name: 'start-nodeindex'}
             .form-group
               %label{or: 'start_textoffset'} Text Offset
               %input#start_textoffset{type: 'number',
-                  class: 'form-control'}
+                  class: 'form-control validate[required,funcCall[window.checkTextOffset]',
+                  name: 'start-textoffset'}
 
       .col-md-5
         .panel.panel-default
@@ -35,14 +38,17 @@
               %label{for: 'end_selector'} Selector
               %select#end_selector
             .form-group
-              %label{for: 'end_nodeindex'} Node Index
+              %label{for: 'end_nodeindex'}
+                Node Index
+                %strong (includes child element nodes!)
               %input#end_nodeindex{type: 'number',
                   class: 'form-control validate[required,funcCall[window.checkNodeIndex]',
                   name: 'end-nodeindex'}
             .form-group
               %label{or: 'end_textoffset'} Text Offset
               %input#end_textoffset{type: 'number',
-                  class: 'form-control'}
+                  class: 'form-control validate[required,funcCall[window.checkTextOffset]',
+                  name: 'end-textoffset'}
 
       .col-md-2
         %button.btn.btn-primary{type: 'submit'} Select
@@ -59,7 +65,7 @@
       %p
         This is ordinary paragraph text within the body of the document, where
         certain words and phrases may be <em>emphasized</em> to mark them as
-        %strong> particularly important
+        %strong particularly important
         \.
       %h2 This is a headline of secondary importance to the headline above
       %p

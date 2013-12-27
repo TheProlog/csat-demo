@@ -18,5 +18,4 @@ window.meldd_gateway.register 'CsatSelectorElementNodeFinder', class
 
   find: (field) ->
     selector_id = deriveId(field)
-    debug.debug 'selector_id', selector_id
     getContentNodeFor selector_id
