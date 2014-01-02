@@ -20,6 +20,7 @@ describe 'User visits landing page', js: true do
         selector = '.col-md-5:nth-child(1) ' +
             '.panel .panel-body .form-group:nth-child(1)' +
             ' .start_selectorformError'
+        binding.pry
         page.should have_selector(selector)
       end
 
@@ -35,4 +36,3 @@ describe 'User visits landing page', js: true do
   end # describe 'and immediately clicks the "Submit" button'
 
 end # describe 'User visits landing page'
-

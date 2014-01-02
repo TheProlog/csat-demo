@@ -55,103 +55,35 @@ describe 'User visits landing page' do
           @all_rows = @element.all '.row'
         end
 
-        it 'three .row divs' do
-          expect(@all_rows.length).to eq 3
-        end
+        describe 'four .row divs, where' do
 
-        it 'no other non-blank children' do
-          children = @element.native.children.to_a.delete_if(&:blank?)
-          expect(children.length).to eq @all_rows.length
-        end
-
-        describe 'a first row that' do
-
-          before :each do
-            row = @element.all('.row').to_a.first
-            @children = row.native.children.to_a.delete_if(&:blank?)
+          it 'the first contains an .alertbox div' do
+            @all_rows[0].should have_css '#alertbox'
           end
 
-          it 'contains a form element' do
-            expect(@children.first.name).to eq 'form'
+          it 'the second contains a form' do
+            @all_rows[1].should have_css 'form#form1'
           end
 
-          describe 'contains a form element that' do
+          describe 'the third' do
 
-            before :each do
-              @form = @children.first
-              @children = @form.children.to_a.delete_if(&:blank?)
+            subject { @all_rows[2] }
+
+            it 'contains an h2 header' do
+              expect(subject).to have_css 'h2'
             end
 
-            it 'contains three child elements' do
-              expect(@children.length).to eq 3
+            it 'has distinctive styling (a small Bootstrap well)' do
+              expect(subject['class']).to eq 'row well well-sm'
             end
 
-            it 'contains a (wrapped) button as the last child' do
-              container = @children.to_a.last
-              expect(container['class']).to eq 'col-md-2'
-              button = container.children[1]
-              expect(button.name).to eq 'button'
-              expect(button['class'].split ' ').to include 'btn-primary'
-            end
+          end   # describe 'the third'
 
-            it 'contains two .col-md-5 divs and a button' do
-              [0, 1].each do |index|
-                expect(@children[index]['class']).to eq 'col-md-5'
-              end
-            end
-
-            describe 'contains two divs that each' do
-
-              pending 'need to be described'
-
-            end # describe 'contains two divs that'
-
-          end # describe 'contains a form element that'
-
-          it 'contains no other elements' do
-            expect(@children.length).to eq 1
+          it 'the fourth should contain the .boilerplate content' do
+            @all_rows[3].should have_css '.boilerplate'
           end
 
-        end
-
-        describe 'a second row that' do
-
-          before :each do
-            @row = @element.all('.row').to_a[1]
-          end
-
-          it 'is a small "well"-styled row div' do
-            classes = @row['class'].split ' '
-            %w(row well-sm well).each do |klass|
-            # ['row', 'well-sm', 'well'].each do |klass|
-              expect(classes).to include klass
-            end
-          end
-
-          it 'contains an h2 element with the correct caption' do
-            children = @row.native.children.to_a.delete_if(&:blank?)
-            element = children.first
-            expect(element.name).to eq 'h2'
-            expected_text = 'Content affected by the selection is below.'
-            expect(element.text).to eq expected_text
-          end
-
-        end # describe 'a second row that itself contains'
-
-        describe 'a third row that itself contains' do
-
-          before :each do
-            @row = @element.all('.row').last
-          end
-
-          it 'a 12-column .boilerplate div' do
-            @row.should have_selector '.boilerplate.col-md-12'
-          end
-
-          it 'no other children' do
-          end
-
-        end # describe 'a third row that itself contains'
+        end # describe 'four .row divs, where'
 
       end # describe 'containing'
 

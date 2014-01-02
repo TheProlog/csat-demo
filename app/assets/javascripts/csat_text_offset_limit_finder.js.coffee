@@ -8,7 +8,7 @@ window.meldd_gateway.register 'TextOffsetLimitFinder', class
     element = new ElementNodeFinder().find(field)
     NodeIndexFinder = window.meldd_gateway.use 'CsatNodeIndexFinder'
     nodeIndex = new NodeIndexFinder().find(field)
-    node = element.childNodes[nodeIndex]
+    node = element.childNodes[nodeIndex] || ''
     node.length - 1
 
   constructor: -> ;
