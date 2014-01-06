@@ -18,10 +18,6 @@ performValidation = (field, validatorClass) ->
   obj.validate()
   formatValidationMessage obj.message
 
-setupInitControl = (selector) ->
-  InitControl = window.meldd_gateway.use 'InitSelectorSelectControl'
-  new InitControl().setup({selector})
-
 # actual call has parameter list: (field, rules, i, options) [if we care later]
 window.checkNodeIndex = (field) ->
   debug.debug 'window.checkNodeIndex', field
@@ -30,9 +26,28 @@ window.checkNodeIndex = (field) ->
 window.checkTextOffset = (field) ->
   performValidation field, 'TextOffsetValidator'
 
-selectContent = ->
+showSelectionAlert = ->
   SelectionAlert = window.meldd_gateway.use 'SelectionAlert'
   new SelectionAlert().show()
+
+getEndpointValues = ->
+  CsatValueHarvester = window.meldd_gateway.use 'CsatValueHarvester'
+  new CsatValueHarvester().values()
+
+setRangeEndpoint = (endpoint, setter) ->
+  el = $(endpoint.selector)
+  setter({container: el[endpoint.nodeIndex], offset: endpoint.offset})
+
+createSelection = ->
+  endpoints = getEndpointValues()
+  setRangeEndpoint endpoints.start, $.Range.current().start
+  setRangeEndpoint endpoints.end, $.Range.current().end
+  debug.debug $.Range.current()
+  # new $.Range($.Range.current())
+
+selectContent = ->
+  showSelectionAlert()
+  createSelection()
 
 formIsValid = ->
   getForm().validationEngine('validate')
@@ -41,16 +56,11 @@ buttonHandler = (event) ->
   event.preventDefault()
   selectContent() if formIsValid()
 
-hijackSubmitButton = ->
-  button = $('button.btn-primary')
-  button.click(buttonHandler)
-
-populateSelectorLists = ->
-  setupInitControl '#start_selector'
-  setupInitControl '#end_selector'
+setupForm = (params) ->
+  CsatFormInitialiser = window.meldd_gateway.use 'CsatFormInitialiser'
+  new CsatFormInitialiser().setup(params)
 
 jQuery ->
-  populateSelectorLists()
-  hijackSubmitButton()
+  setupForm {handler: buttonHandler, selectButton: $('button.btn-primary')}
   getForm().validationEngine()
   $('#start_selector').focus()
