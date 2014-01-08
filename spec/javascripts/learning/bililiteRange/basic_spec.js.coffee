@@ -17,7 +17,7 @@ describe 'Learning bililiteRange', ->
   describe 'bililiteRange', ->
 
     beforeEach ->
-      @el = fixture.el.children[0]
+      @el = fixture.el.children[0].children[0] # '#content > p:nth-child(1)'
 
     it 'is a function with two parameters', ->
       expect(@func).to.be.a 'function'
@@ -92,8 +92,7 @@ describe 'Learning bililiteRange', ->
         describe 'when called with the argument "selection"', ->
 
           beforeEach ->
-            @el.focus()
-            @node = @func(@el)
+            @node = @func(@el.firstElementChild)
             @sel1 = @node.bounds([8, 16]).select()
             @sel = @node.bounds('selection')
 
@@ -102,3 +101,11 @@ describe 'Learning bililiteRange', ->
 
           it 'contains the expected text', ->
             expect(@sel.selection()).to == 'ordinary'
+
+      describe '"element", which returns', ->
+
+        description = 'the top-level element within which a selection is' +
+            ' active, if a single element'
+        it description, ->
+          rng = @func(@el).bounds([8,16]).select()
+          expect(rng.element()).to == $('#content').get(0)

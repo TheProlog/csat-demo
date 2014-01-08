@@ -40,8 +40,9 @@ setRangeEndpoint = (endpoint, setter) ->
 
 createSelection = ->
   endpoints = getEndpointValues()
-  setRangeEndpoint endpoints.start, $.Range.current().start
-  setRangeEndpoint endpoints.end, $.Range.current().end
+  r = new $.Range(endpoints.start.selector)
+  setRangeEndpoint endpoints.start, r.start
+  setRangeEndpoint endpoints.end, r.end
   debug.debug $.Range.current()
   # new $.Range($.Range.current())
 
