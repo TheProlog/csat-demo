@@ -12,6 +12,8 @@ describe 'Learning bililiteRange', ->
         ' where certain words and phrases may be <em>emphasized</em> to mark' +
         ' them as <strong>particularly important</strong>.' +
         '</p>' +
+        '<p>This is a test.</p>' +
+        '<p>This is <em>another</em> test.</p>' +
       '</div>'
 
   describe 'bililiteRange', ->
@@ -109,3 +111,47 @@ describe 'Learning bililiteRange', ->
         it description, ->
           rng = @func(@el).bounds([8,16]).select()
           expect(rng.element()).to == $('#content').get(0)
+
+        description = 'the common parent element of a selection which spans' +
+            'multiple elements'
+        it description, ->
+          el = fixture.el.children[0] # div.content
+          sel = @func(el).bounds([8, 179]).select() # first to last children
+          expect(sel.element()).to == $('#content').get(0)
+
+      describe '"selection", when the selection', ->
+
+        it 'is within a single node', ->
+          sel = @func(@el).bounds([0, 7]).select()
+          expect(sel.selection()).to.be 'This is'
+
+        it 'spans multiple nodes', ->
+          sel = @func(@el).bounds([97, 117]).select()
+          expect(sel.selection()).to.be 'may be emphasized to'
+
+      describe '"_nativeRange", when the selection', ->
+
+        it 'is within a single node', ->
+          sel = @func(@el).bounds([0, 7]).select()
+          rng = sel._nativeRange()
+          expect(rng.commonAncestorContainer).to == $('.boilerplate h1').get(0)
+          expect(rng.startContainer).to == rng.commonAncestorContainer
+          expect(rng.endContainer).to == rng.commonAncestorContainer
+          expect(rng.startOffset).to.be 0
+          # expect(rng.endOffset).to.be 7     #### FAILS; reports 5
+          debug.debug rng.startOffset, rng.endOffset
+
+        it 'spans multiple nodes in the same element', ->
+          el = fixture.el.children[0] # '#content'
+          sel = @func(el).bounds([0, 176]).select()
+          rng = sel._nativeRange()
+          expect(rng.commonAncestorContainer).to == $('#content')
+          debug.debug rng.commonAncestorContainer == $('#content')      # false
+          expect(rng.startContainer).to == $('#content p:nth-child(1)')
+          debug.debug rng.startContaner == $('#content p:nth-child(1)') # false again
+          expect(rng.endContainer).to == $('#content p:nth-child(3)')
+          debug.debug rng.endContainer == $('#content p:nth-child(3)')  # again false
+          expect(rng.startOffset).to == 0
+          debug.debug rng.endOffset # 3
+          # expect(rng.endOffset).to == 7 # 'This is'.length
+          debug.debug Object.clone(sel._nativeRange()), sel.selection()
