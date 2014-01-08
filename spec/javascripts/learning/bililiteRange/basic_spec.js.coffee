@@ -36,3 +36,69 @@ describe 'Learning bililiteRange', ->
 
       it '"all"', ->
         expect(@func(@el).all()).to == fixture.el.innerText
+
+      # Not testing using all() with parameter, which changes the content to the
+      # passed-in text without changing the selection bounds. See
+      # https://github.com/dwachss/bililiteRange/blob/master/bililiteRange.js#L203-L207
+      # for details.
+
+      it '"length"', ->
+        expect(@func(@el).length()).to == @el.innerText.length
+
+      describe '"bounds", which', ->
+
+        describe 'when called with no arguments', ->
+
+          beforeEach ->
+            @bounds = @func(@el).bounds()
+
+          it 'returns a two-element array', ->
+            expect(@bounds).to.be.an 'array'
+            expect(@bounds).to.have.length 2
+
+          it 'has a first element value not less than zero', ->
+            expect(@bounds[0]).to.be.a 'number'
+            expect(@bounds[0]).to.be >= 0
+
+          it 'has a last element value not greater than the element length', ->
+            expect(@bounds[1]).to.be.a 'number'
+            expect(@bounds[1]).to.be <= @el.innerText.length
+
+        describe 'when called with a two-element array of indexes', ->
+          beforeEach ->
+            @ret = @func(@el).bounds([8, 16])
+
+          it 'returns a W3CRange object with the specified bounds', ->
+            expect(@ret.bounds()).to == [8, 16]
+
+          it 'can be used to select the expected text', ->
+            expect(@ret.select().selection()).to.be 'ordinary'
+
+        describe 'when called with the argument "all"', ->
+
+          beforeEach ->
+            @ret = @func(@el).bounds('all')
+
+          description = 'returns a W3CRange object whose bounds() method' +
+              ' returns a 2-element array with'
+          describe description, ->
+
+            it 'a first value of zero', ->
+              expect(@ret.bounds()[0]).to.be 0
+
+            it 'a second value of the length of the element text', ->
+              expect(@ret.bounds()[1]).to.be @el.innerText.length
+
+        describe 'when called with the argument "selection"', ->
+
+          beforeEach ->
+            @el.focus()
+            @node = @func(@el)
+            @sel1 = @node.bounds([8, 16]).select()
+            @sel = @node.bounds('selection')
+
+          it 'returns the same W3Range object as from .select()', ->
+            expect(@sel1).to == @sel
+
+          it 'contains the expected text', ->
+            expect(@sel.selection()).to == 'ordinary'
