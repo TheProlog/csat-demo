@@ -23,19 +23,19 @@ describe 'ContentSelection class', ->
     setupFixture()
     @klass = window.meldd_gateway.use 'ContentSelection'
 
-  describe 'has an API with', ->
+  describe 'has an API with a', ->
 
-    it 'a constructor which takes one parameter', ->
+    it 'constructor which takes one parameter', ->
       expect(@klass).to.be.a 'function'
       expect(@klass).to.have.length 1
 
-    it 'a setStart method that takes three parameters', ->
+    it 'setStart method that takes three parameters', ->
       verifyMethodApi(new @klass('#content'), 'setStart', 3)
 
-    it 'a setEnd method that takes three parameters', ->
+    it 'setEnd method that takes three parameters', ->
       verifyMethodApi(new @klass('#content'), 'setEnd', 3)
 
-    it 'a getContent method that takes no parameters', ->
+    it 'getContent method that takes no parameters', ->
       verifyMethodApi(new @klass('#content'), 'getContent', 0)
 
   describe 'has a constructor that', ->
@@ -51,10 +51,74 @@ describe 'ContentSelection class', ->
 
       it 'the parameter does not identify an existing selector', ->
         expect(=> new @klass('#bogus')).to.throwError((e) ->
-          expect(e).to.be '#bogus is not a valid selector.'
+          message = 'ContentSelection constructor was passed an invalid selector.'
+          expect(e.message).to.be message
         )
 
       it 'no parameter was specified', ->
         expect(=> new @klass()).to.throwError((e) ->
-          expect(e).to.be 'ContentSelection constructor requires a parameter.'
+          message = 'ContentSelection constructor requires a parameter.'
+          expect(e.message).to.be message
         )
+
+  describe 'has a setStart method that', ->
+
+    description = 'sets the "startSelector" property to the first parameter' +
+        ' value if it is a valid selector'
+    it description, ->
+      obj = new @klass('#content')
+      startSelector = 'p:nth-child(1)'
+      obj.setStart(startSelector, 0, 0)
+      # WTF: Normal expect doesn't work for strings; does work for integers.
+      expect(obj.startSelector == startSelector).to.be true
+
+    description = 'sets the "startNodeIndex" property to the second parameter' +
+        ' value if it is a valid node index for @startElement'
+    it description, ->
+      obj = new @klass('#content')
+      startNodeIndex = 2
+      obj.setStart('p:nth-child(1)', startNodeIndex, 0)
+      expect(obj.startNodeIndex).to.be startNodeIndex
+
+    description = 'sets the "startTextOffset" property to the third parameter' +
+        ' value if it is a valid text offset for the selected element and node'
+    it description, ->
+      obj = new @klass('#content')
+      startTextOffset = 4
+      obj.setStart('p:nth-child(1)', 2, startTextOffset)
+      expect(obj.startTextOffset).to.be startTextOffset
+
+    describe 'raises an error when', ->
+
+      beforeEach ->
+        @selector = 'p:nth-child(1)'
+        @nodeIndex = 2
+        @textOffset = 0
+        @expected = 'Expected error message not set. FIX!'
+
+      afterEach ->
+        obj = new @klass('#content')
+        expect(=> obj.setStart(@selector, @nodeIndex, @textOffset)).to.
+            throwError((e) =>
+          expect(e.message).to.be @expected
+        )
+
+      it 'the selector parameter does not identify an existing selector', ->
+        @selector = undefined
+        @expected = 'setStart was passed an invalid or nonexistent selector.'
+
+      describe 'the node index parameter', ->
+
+        it 'is not a valid node index for the selected element', ->
+          @nodeIndex = 74
+          @expected = 'setStart was passed an invalid node index.'
+
+        it 'does not reference a text node within the selected element', ->
+          @nodeIndex = 1
+          @expected = 'setStart was passed a node index for a non-text node.'
+
+      describe 'the text offset parameter', ->
+
+        it 'is not a valid text offset for the selected node', ->
+          @textOffset = 271
+          @expected = 'setStart was passed an invalid text offset.'
