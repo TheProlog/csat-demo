@@ -13,6 +13,10 @@ setupFixture = ->
         '</span></p></div>'
   fixture.set base_div
 
+verifyMethodApi = (obj, method, length) ->
+  expect(obj[method]).to.be.a 'function'
+  expect(obj[method]).to.have.length length
+
 describe 'ContentSelection class', ->
 
   beforeEach ->
@@ -26,16 +30,31 @@ describe 'ContentSelection class', ->
       expect(@klass).to.have.length 1
 
     it 'a setStart method that takes three parameters', ->
-      obj = new @klass('#content')
-      expect(obj.setStart).to.be.a 'function'
-      expect(obj.setStart).to.have.length 3
+      verifyMethodApi(new @klass('#content'), 'setStart', 3)
 
     it 'a setEnd method that takes three parameters', ->
-      obj = new @klass('#content')
-      expect(obj.setEnd).to.be.a 'function'
-      expect(obj.setEnd).to.have.length 3
+      verifyMethodApi(new @klass('#content'), 'setEnd', 3)
 
     it 'a getContent method that takes no parameters', ->
+      verifyMethodApi(new @klass('#content'), 'getContent', 0)
+
+  describe 'has a constructor that', ->
+
+    description = 'sets the "baseSelector" property to the parameter value if' +
+        ' the parameter identifies an existing container'
+    it description, ->
       obj = new @klass('#content')
-      expect(obj.getContent).to.be.a 'function'
-      expect(obj.getContent).to.have.length 0
+      # expect(obj.baseSelector).to == 'anything at all'  # always true; why?!?
+      expect(obj.baseSelector == '#content').to.be true
+
+    describe 'raises an error when', ->
+
+      it 'the parameter does not identify an existing selector', ->
+        expect(=> new @klass('#bogus')).to.throwError((e) ->
+          expect(e).to.be '#bogus is not a valid selector.'
+        )
+
+      it 'no parameter was specified', ->
+        expect(=> new @klass()).to.throwError((e) ->
+          expect(e).to.be 'ContentSelection constructor requires a parameter.'
+        )
