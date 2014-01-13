@@ -1,7 +1,7 @@
 
 #= require util/gateway
 
-window.meldd_gateway.register 'NodeIndexValidator', class
+window.meldd_gateway.register 'CsatNodeIndexChecker', class
 
   createValidator = (params) ->
     Validator = window.meldd_gateway.use 'BoundedIntegerValidator'

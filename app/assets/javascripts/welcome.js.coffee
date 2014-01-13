@@ -20,8 +20,7 @@ performValidation = (field, validatorClass) ->
 
 # actual call has parameter list: (field, rules, i, options) [if we care later]
 window.checkNodeIndex = (field) ->
-  debug.debug 'window.checkNodeIndex', field
-  performValidation field, 'NodeIndexValidator'
+  performValidation field, 'CsatNodeIndexChecker'
 
 window.checkTextOffset = (field) ->
   performValidation field, 'CsatTextOffsetChecker'
@@ -34,17 +33,17 @@ getEndpointValues = ->
   CsatValueHarvester = window.meldd_gateway.use 'CsatValueHarvester'
   new CsatValueHarvester().values()
 
-setRangeEndpoint = (endpoint, setter) ->
-  el = $(endpoint.selector)
-  setter({container: el[endpoint.nodeIndex], offset: endpoint.offset})
+# setRangeEndpoint = (endpoint, setter) ->
+#   el = $(endpoint.selector)
+#   setter({container: el[endpoint.nodeIndex], offset: endpoint.offset})
 
 createSelection = ->
   endpoints = getEndpointValues()
-  r = new $.Range(endpoints.start.selector)
-  setRangeEndpoint endpoints.start, r.start
-  setRangeEndpoint endpoints.end, r.end
-  debug.debug $.Range.current()
+  # r = new $.Range(endpoints.start.selector)
+  # setRangeEndpoint endpoints.start, r.start
+  # setRangeEndpoint endpoints.end, r.end
   # new $.Range($.Range.current())
+  debug.info 'createSelection needs to be completely rewritten.'
 
 selectContent = ->
   showSelectionAlert()
