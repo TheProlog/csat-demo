@@ -24,7 +24,7 @@ window.checkNodeIndex = (field) ->
   performValidation field, 'NodeIndexValidator'
 
 window.checkTextOffset = (field) ->
-  performValidation field, 'TextOffsetValidator'
+  performValidation field, 'CsatTextOffsetChecker'
 
 showSelectionAlert = ->
   SelectionAlert = window.meldd_gateway.use 'SelectionAlert'
