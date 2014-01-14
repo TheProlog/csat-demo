@@ -104,8 +104,8 @@ describe 'ContentSelection class', ->
         )
 
       it 'the selector parameter does not identify an existing selector', ->
-        @selector = undefined
-        @expected = 'setStart was passed an invalid or nonexistent selector.'
+        @selector = '#bogus'
+        @expected = 'setStart was passed an invalid selector.'
 
       describe 'the node index parameter', ->
 
