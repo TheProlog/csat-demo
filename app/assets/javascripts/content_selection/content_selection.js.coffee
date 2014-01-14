@@ -1,7 +1,7 @@
 
 #= require util/gateway
 
-class ConstructorParamValidator
+class _ConstructorParamValidator
 
   doValidation = (params, validators) ->
     GenericValidator = window.meldd_gateway.use 'CSGenericValidator'
@@ -26,6 +26,9 @@ class ConstructorParamValidator
 
   validate: (params_in) ->
     doValidation getParams(params_in), getValidators()
+
+window.meldd_gateway.register 'CSConstructorParamValidator',
+    _ConstructorParamValidator, 'CSValidators'
 
 class SelectorValidator
 
@@ -117,7 +120,8 @@ window.meldd_gateway.register 'ContentSelection', class
       new klass().validate params
 
   constructor: (@baseSelector) ->
-    new ConstructorParamValidator().validate {selector: @baseSelector}
+    Validator = window.meldd_gateway.use 'CSConstructorParamValidator'
+    new Validator().validate {selector: @baseSelector}
 
   setStart: (selector, nodeIndex, textOffset) ->
     ident = 'setStart'
