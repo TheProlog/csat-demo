@@ -2,7 +2,7 @@
 // require support/jasmine-jquery
 //= require support/expect
 // require support/sinon
-// require support/your-support-file
+//= require_tree ./support/spec_support/
 //
 // Deferring execution
 // If you're using CommonJS, RequireJS or some other asynchronous library you can defer execution. Call Teaspoon.execute()
