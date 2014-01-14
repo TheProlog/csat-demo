@@ -19,7 +19,11 @@ window.meldd_gateway.register 'ContentSelection', class
     @startTextOffset = textOffset
 
   setEnd: (selector, nodeIndex, textOffset) ->
-    ;
+    ident = 'setEnd'
+    validateEndpoint {selector, nodeIndex, textOffset, ident}
+    @endSelector = selector
+    @endNodeIndex = nodeIndex
+    @endTextOffset = textOffset
 
   getContent: ->
     ;

@@ -122,3 +122,65 @@ describe 'ContentSelection class', ->
         it 'is not a valid text offset for the selected node', ->
           @textOffset = 271
           @expected = 'setStart was passed an invalid text offset.'
+
+  describe 'has a setEnd method that', ->
+
+    description = 'sets the "endSelector" property to the first parameter' +
+        ' value if it is a valid selector'
+    it description, ->
+      obj = new @klass('#content')
+      endSelector = 'p:nth-child(1)'
+      obj.setEnd(endSelector, 0, 0)
+      # # WTF: Normal expect doesn't work for strings; does work for integers.
+      expect(obj.endSelector == endSelector).to.be true
+
+    description = 'sets the "endNodeIndex" property to the second parameter' +
+        ' value if it is a valid node index for @endElement'
+    it description, ->
+      obj = new @klass('#content')
+      endNodeIndex = 2
+      obj.setEnd('p:nth-child(1)', endNodeIndex, 0)
+      expect(obj.endNodeIndex).to.be endNodeIndex
+
+    description = 'sets the "endTextOffset" property to the third parameter' +
+        ' value if it is a valid text offset for the selected element and node'
+    it description, ->
+      obj = new @klass('#content')
+      endTextOffset = 4
+      obj.setEnd('p:nth-child(1)', 2, endTextOffset)
+      expect(obj.endTextOffset).to.be endTextOffset
+
+    describe 'raises an error when', ->
+
+      beforeEach ->
+        @selector = 'p:nth-child(1)'
+        @nodeIndex = 2
+        @textOffset = 0
+        @expected = 'Expected error message not set. FIX!'
+
+      afterEach ->
+        obj = new @klass('#content')
+        expect(=> obj.setEnd(@selector, @nodeIndex, @textOffset)).to.
+            throwError((e) =>
+          expect(e.message).to.be @expected
+        )
+
+      it 'the selector parameter does not identify an existing selector', ->
+        @selector = '#bogus'
+        @expected = 'setEnd was passed an invalid selector.'
+
+      describe 'the node index parameter', ->
+
+        it 'is not a valid node index for the selected element', ->
+          @nodeIndex = 74
+          @expected = 'setEnd was passed an invalid node index.'
+
+        it 'does not reference a text node within the selected element', ->
+          @nodeIndex = 1
+          @expected = 'setEnd was passed a node index for a non-text node.'
+
+      describe 'the text offset parameter', ->
+
+        it 'is not a valid text offset for the selected node', ->
+          @textOffset = 271
+          @expected = 'setEnd was passed an invalid text offset.'
