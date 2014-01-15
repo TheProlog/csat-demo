@@ -66,3 +66,27 @@ describe 'ContentSelection class', ->
   describeAnEnd.call @, 'start'
 
   describeAnEnd.call @, 'end'
+
+  describe 'has a getContent method that can retrieve content', ->
+
+    beforeEach ->
+      @obj = new @klass('#content')
+
+    afterEach ->
+      expect(@obj.getContent()).to.be @expected
+
+    it 'within a single text node', ->
+      @obj.setStart 'p:nth-child(1)', 0, 0
+      @obj.setEnd   'p:nth-child(1)', 0, 8
+      @expected = 'This is '
+
+    it 'across multiple nodes in a single element', ->
+      @obj.setStart 'p:nth-child(1)', 0, 8
+      @obj.setEnd   'p:nth-child(1)', 2, 5
+      @expected = 'a test. <em>This is only a test.</em> That'
+
+    it 'across multiple elements', ->
+      @obj.setStart 'p:nth-child(1)', 0, 8
+      @obj.setEnd '#other p:nth-child(1)', 0, 4
+      @expected = '<p>a test. <em>This is only a test.</em> That is all.</p>' +
+          '<div id="other"><p>This</p></div>'
