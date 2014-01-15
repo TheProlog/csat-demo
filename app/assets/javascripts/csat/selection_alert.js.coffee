@@ -1,6 +1,19 @@
 
 #= require util/gateway
 
+CancelButton = class
+
+  getWrappedClass = ->
+    window.meldd_gateway.use 'UtilButton'
+
+  constructor: ->
+    @button = new getWrappedClass()
+    @button.attrs['aria-hidden'] = true
+    @button.attrs['data-dismiss'] = 'alert'
+
+  html: ->
+    @button.html '&times'
+
 window.meldd_gateway.register 'SelectionAlert', class
 
   createCancelButton = ->
@@ -42,10 +55,12 @@ window.meldd_gateway.register 'SelectionAlert', class
     end = createEndpointFrom endpointValues.end
     buildSelectionMarkup start, end
 
+  updateDisplayedMarkup = (html) ->
+    $('#alertbox').html(html).addClass('alert alert-info fade in').alert()
+
   constructor: -> ;
 
   show: (alertSelector = '#alertbox') ->
-    button = createCancelButton()
     report = createSelectionReport()
-    html = button.outerHTML() + report.outerHTML()
-    $('#alertbox').html(html).addClass('alert alert-info fade in').alert()
+    html = new CancelButton().html() + report.outerHTML()
+    updateDisplayedMarkup(html)

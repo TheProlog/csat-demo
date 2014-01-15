@@ -3,19 +3,24 @@
 
 window.meldd_gateway.register 'CsatValueHarvester', class
 
-  getSelectorValue = (whichEnd) ->
-    itemSelector = ['select#', '_selector'].join whichEnd
+  defaultFindSelectedElementFor = (baseSelector, selector) ->
     # Finding using the value of the field as a selector — NOT simply finding and
     # returning the value of the field!
-    $(@baseSelector).find($(itemSelector).val())
+    $(baseSelector).find($(selector).val())
+
+  defaultGetIntegerValueForField = (whichEnd, field) ->
+    selector = 'input#{1}_{2}'.assign(whichEnd, field)
+    $(selector).val().toNumber()
+
+  getSelectorValue = (whichEnd) ->
+    itemSelector = ['select#', '_selector'].join whichEnd
+    @findSelectedElementFor @baseSelector, itemSelector
 
   getNodeIndex = (whichEnd) ->
-    itemSelector = ['input#', '_nodeindex'].join whichEnd
-    $(itemSelector).val().toInt()
+    @getIntegerValueForField(whichEnd, 'nodeindex')
 
   getTextOffset = (whichEnd) ->
-    itemSelector = ['input#', '_textoffset'].join whichEnd
-    $(itemSelector).val().toInt()
+    @getIntegerValueForField(whichEnd, 'textoffset')
 
   valuesFor = (whichEnd) ->
     selector = getSelectorValue.call @, whichEnd
@@ -24,7 +29,12 @@ window.meldd_gateway.register 'CsatValueHarvester', class
     baseSelector = @baseSelector
     {selector, nodeIndex, offset, baseSelector}
 
-  constructor: (@baseSelector = '.boilerplate') -> ;
+  constructor: (params = {}) ->
+    @baseSelector = params.baseSelector || '.boilerplate'
+    @findSelectedElementFor = params.findSelectedElementFor ||
+        defaultFindSelectedElementFor
+    @getIntegerValueForField = params.getIntegerValueForField ||
+      defaultGetIntegerValueForField
 
   values: ->
     startValues = valuesFor.call @, 'start'
@@ -33,4 +43,3 @@ window.meldd_gateway.register 'CsatValueHarvester', class
       start:        startValues
       end:          endValues
     }
-
