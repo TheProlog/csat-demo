@@ -14,9 +14,8 @@
 //= require jquery_ujs
 //= require bootstrap
 //= require ba-debug-min
-//= require bililiteRange
+//= require sugar
 //= require jquery.validationEngine-en
 //= require jquery.validationEngine
-//= require mootools-core-1.4.5-full-compat-yc
 //= require outerHTML-2.1.0-min
 //= require_tree .

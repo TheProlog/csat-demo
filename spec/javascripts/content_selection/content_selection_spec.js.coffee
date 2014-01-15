@@ -67,26 +67,45 @@ describe 'ContentSelection class', ->
 
   describeAnEnd.call @, 'end'
 
-  describe 'has a getContent method that can retrieve content', ->
+  describe 'has a getContent method that', ->
+
+    describe 'can retrieve content', ->
+
+      beforeEach ->
+        @obj = new @klass('#content')
+
+      afterEach ->
+        expect(@obj.getContent()).to.be @expected
+
+      it 'within a single text node', ->
+        @obj.setStart 'p:nth-child(1)', 0, 0
+        @obj.setEnd   'p:nth-child(1)', 0, 8
+        @expected = 'This is '
+
+      it 'across multiple nodes in a single element', ->
+        @obj.setStart 'p:nth-child(1)', 0, 8
+        @obj.setEnd   'p:nth-child(1)', 2, 5
+        @expected = 'a test. <em>This is only a test.</em> That'
+
+      it 'across multiple elements', ->
+        @obj.setStart 'p:nth-child(1)', 0, 8
+        @obj.setEnd '#other p:nth-child(1)', 0, 4
+        @expected = '<p>a test. <em>This is only a test.</em> That is all.</p>' +
+            '<div id="other"><p>This</p></div>'
+
+  describe 'raises an error when called without first having called', ->
 
     beforeEach ->
       @obj = new @klass('#content')
 
-    afterEach ->
-      expect(@obj.getContent()).to.be @expected
+    it 'the setStart method', ->
+      @obj.setEnd 'p:nth-child(1)', 0, 8
+      expect(=> @obj.getContent()).to.throwError((e) ->
+        expect(e.message).to.be 'Selection starting point not set!'
+      )
 
-    it 'within a single text node', ->
-      @obj.setStart 'p:nth-child(1)', 0, 0
-      @obj.setEnd   'p:nth-child(1)', 0, 8
-      @expected = 'This is '
-
-    it 'across multiple nodes in a single element', ->
+    it 'the setEnd method', ->
       @obj.setStart 'p:nth-child(1)', 0, 8
-      @obj.setEnd   'p:nth-child(1)', 2, 5
-      @expected = 'a test. <em>This is only a test.</em> That'
-
-    it 'across multiple elements', ->
-      @obj.setStart 'p:nth-child(1)', 0, 8
-      @obj.setEnd '#other p:nth-child(1)', 0, 4
-      @expected = '<p>a test. <em>This is only a test.</em> That is all.</p>' +
-          '<div id="other"><p>This</p></div>'
+      expect(=> @obj.getContent()).to.throwError((e) ->
+        expect(e.message).to.be 'Selection ending point not set!'
+      )

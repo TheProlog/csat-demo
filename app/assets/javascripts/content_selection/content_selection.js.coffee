@@ -3,8 +3,7 @@
 
 window.meldd_gateway.register 'ContentSelection', class
 
-  combineNodesAsString = (contents_in) ->
-    contents = Object.clone(contents_in)
+  combineNodesAsString = (contents) ->
     contents.childNodes.to_a = ->
       ret = []
       # childNodes is a NodeList, *not* an Array. Pfffft.
@@ -29,6 +28,17 @@ window.meldd_gateway.register 'ContentSelection', class
     for klass in window.meldd_gateway.useGroup 'CSValidators'
       new klass().validate params
 
+  endpointIsValid = (selector, nodeIndex, textOffset) ->
+    selector and nodeIndex? and textOffset?
+
+  verifyEndpoints = ->
+    unless endpointIsValid @startSelector, @startNodeIndex, @startTextOffset
+      which = 'starting'
+    else
+      unless endpointIsValid @endSelector, @endNodeIndex, @endTextOffset
+        which = 'ending'
+    throw new Error('Selection {1} point not set!'.assign(which)) if which
+
   constructor: (@baseSelector) ->
     Validator = window.meldd_gateway.use 'CSConstructorParamValidator'
     new Validator().validate {selector: @baseSelector}
@@ -48,4 +58,5 @@ window.meldd_gateway.register 'ContentSelection', class
     @endTextOffset = textOffset
 
   getContent: ->
+    verifyEndpoints.call @
     getSelectionContents.call @
