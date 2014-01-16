@@ -1,53 +1,60 @@
 
 #= require util/gateway
 
-# Rant is re what's been shoved down to 'CsatVhDummiedForm'. Go read it.
-#
-# This STINKS. ~55 lines of crapola that recreates an *entire* *bloody* *form*
-# in all its guts and vainglory, just so the spec for CsatVolueHarvester can
-# point its subject at markup to scrape. Cluttering the public API with wrappers
-# for `$(@baseSelector).find($(itemSelector).val())` and
-# `$(itemSelector).val().toNumber()` seems stupid (read as: down on our knees
-# begging for trouble), but we need a better way to test stuff like this. Maybe
-# a `params` hash to the constructor with optional replacements for internal
-# functions that wrap those two bits of jQuery code. Something. Anything. Just
-# put this out of our misery!
+########################### HELPER/INTERNAL FUNCTIONS ###########################
 
-setupFixture = ->
-  dummiedForm = window.meldd_gateway.use 'CsatVhDummiedForm'
-  fixture.set dummiedForm() + '<div class="boilerplate"></div>'
-  options = [
-    'h1:nth-child(1)',
-    'p:nth-child(2)',
-    'p:nth-child(2) em:nth-child(1)',
-    'p:nth-child(2) strong:nth-child(2)',
-    'h2:nth-child(3)',
-    'p:nth-child(4)',
-    'ul:nth-child(5)',
-    'ul_nth-child(5) li:nth-child(1)',
-    'ul_nth-child(5) li:nth-child(2)',
-    'ul_nth-child(5) li:nth-child(3)',
-    'ul_nth-child(5) li:nth-child(4)'
-  ]
-  for option in options
-    $('#start_selector').append($('<option>').text(option))
-    $('#end_selector').append($('<option>').text(option))
+## Builders (1 of 4) ##############################
 
-setupSelection = (startSelector, startIndex, startOffset,
-    endSelector, endIndex, endOffset) ->
-  $('#start_selector').select startSelector
-  $('#end_selector').select endSelector
-  $('#start_nodeindex').val startIndex.toString()
-  $('#end_nodeindex').val endIndex.toString()
-  $('#start_textoffset').val startOffset.toString()
-  $('#end_textoffset').val endOffset.toString()
+build_instance = (klass, params_in = {}) ->
+  new klass(params_in)
+
+buildValuesForInstanceWith = (klass, elementFor, valueFor) ->
+  params = {
+    findSelectedElementFor: elementFor
+    getIntegerValueForField: valueFor
+  }
+  build_instance(klass, params).values()
+
+## Symbolic Data (2 of 4) #########################
+
+firstElement = 'h1:nth-child(1)'
+
+secondElement = 'p:nth-child(2)'
+
+## ValueHarvester method variables (3 of 4) #######
+
+inSameElement = (params...) ->
+  firstElement
+
+inDifferentElements = (baseSelector, selector) ->
+  if selector.match /#start_selector/
+    firstElement
+  else
+    secondElement
+
+inSameNode = (whichEnd, field) ->
+  if whichEnd == 'end' && field == 'textoffset' then 4 else 0
+
+inDifferentNodes = (whichEnd, field) ->
+  {
+    start:  {nodeindex: 0, textoffset: 0},
+    end:    {nodeindex: 2, textoffset: 3}
+  }[whichEnd][field]
+
+nodesInDifferentElements = (whichEnd, field) ->
+  {
+    start:  {nodeindex: 2, textoffset: 1},
+    end:    {nodeindex: 0, textoffset: 4}
+  }[whichEnd][field]
+
+## "Shared Specs" (4 of 4) ########################
 
 describeFunctionProperty = (funcName) ->
   description = 'sets the value of the "{1}" property so that it'
   describe description.assign(funcName), ->
 
     it 'by default is a function taking two parameters', ->
-      obj = new @klass()
+      obj = build_instance @klass
       func = obj[funcName]
       expect(func).to.be.a 'function'
       expect(func).to.have.length 2
@@ -56,10 +63,9 @@ describeFunctionProperty = (funcName) ->
       newFunc = (p1, p2) -> 'bingo';
       params = {}
       params[funcName] = newFunc
-      obj = new @klass(params)
+      obj = build_instance @klass, params
       func = obj[funcName]
       expect(func).to.be newFunc
-
 
 matchValuesPart = (part, selector, nodeIndex, offset) ->
   it part, ->
@@ -67,8 +73,6 @@ matchValuesPart = (part, selector, nodeIndex, offset) ->
     expect(obj.baseSelector).to.be '.boilerplate'
     expect(obj.nodeIndex).to.be nodeIndex
     expect(obj.offset).to.be offset
-    expect(obj.selector.jquery).to.match /1.\d+.\d+/
-    expect(obj.selector.selector).to.be '.boilerplate ' + selector
 
 ## ########################################################################### ##
 ## ########################################################################### ##
@@ -79,7 +83,6 @@ describe 'CsatValueHarvester class', ->
 
   beforeEach ->
     @klass = window.meldd_gateway.use 'CsatValueHarvester'
-    setupFixture()
 
   describe 'has a public API including', ->
 
@@ -90,10 +93,10 @@ describe 'CsatValueHarvester class', ->
         expect(@klass).to.have.length 1
 
       it 'may be called using a default parameter', ->
-        expect(=> new @klass()).to.not.throwError()
+        expect(=> build_instance @klass).to.not.throwError()
 
     it 'a "values" method that takes no parameters', ->
-      obj = new @klass()
+      obj = build_instance @klass
       expect(obj.values).to.be.a 'function'
       expect(obj.values).to.have.length 0
 
@@ -103,12 +106,12 @@ describe 'CsatValueHarvester class', ->
     describe description.assign('baseSelector'), ->
 
       it '".boilerplate" by default', ->
-        obj = new @klass()
+        obj = build_instance @klass
         expect(obj.baseSelector).to.be '.boilerplate'
 
       it 'an explicit value passed in the params hash', ->
         expected = 'anything at all'
-        obj = new @klass({baseSelector: expected})
+        obj = build_instance @klass, {baseSelector: expected}
         expect(obj.baseSelector).to.be expected
 
     describeFunctionProperty.call @, 'findSelectedElementFor'
@@ -119,48 +122,41 @@ describe 'CsatValueHarvester class', ->
     describe 'an object hash that itself contains object hashes for', ->
 
       beforeEach ->
-        selector = 'h1:nth-child(1)'
-        $('.boilerplate').html('<h1>This is a test.</h1>')
-        setupSelection(selector, 0, 0, selector, 0, 4)
-        @values = new @klass().values()
+        findSelectedElementFor = inSameElement  # or anything at all, really
+        getIntegerValueForField = inSameNode
+        params = {findSelectedElementFor, getIntegerValueForField}
+        @values = build_instance(@klass, params).values()
 
       it 'start', ->
         expect(@values.start).to.be.an 'object'
 
       it 'end', ->
-        expect(@values.start).to.be.an 'object'
+        expect(@values.end).to.be.an 'object'
 
     describe 'correct values for form selection where the selection is', ->
 
       describe 'within a single text node in a single element, including', ->
 
         beforeEach ->
-          selector = 'h1:nth-child(1)'
-          $('.boilerplate').html('<h1>This is a test.</h1>')
-          setupSelection(selector, 0, 0, selector, 0, 4)
-          @values = new @klass().values()
+          @values = buildValuesForInstanceWith @klass, inSameElement, inSameNode
 
-        matchValuesPart.call @, 'start', 'h1:nth-child(1)', 0, 0
-        matchValuesPart.call @, 'end', 'h1:nth-child(1)', 0, 4
+        matchValuesPart.call @, 'start',  firstElement, 0, 0
+        matchValuesPart.call @, 'end',    firstElement, 0, 4
 
       describe 'across multiple text nodes within a single element', ->
 
         beforeEach ->
-          selector = 'h1:nth-child(1)'
-          $('.boilerplate').html('<h1>This <i>is</i> a test.</h1>')
-          setupSelection(selector, 0, 0, selector, 2, 3)
-          @values = new @klass().values()
+          @values = buildValuesForInstanceWith @klass, inSameElement,
+              inDifferentNodes
 
-        matchValuesPart.call @, 'start', 'h1:nth-child(1)', 0, 0
-        matchValuesPart.call @, 'end', 'h1:nth-child(1)', 2, 3
+        matchValuesPart.call @, 'start',  firstElement, 0, 0
+        matchValuesPart.call @, 'end',    firstElement, 2, 3
 
       describe 'across text nodes within separate elements', ->
 
         beforeEach ->
-          html = '<h1>This <i>is</i> a test.</h1><p>More tests.</p>'
-          $('.boilerplate').html(html)
-          setupSelection('h1:nth-child(1)', 2, 1, 'p:nth-child(2)', 0, 4)
-          @values = new @klass().values()
+          @values = buildValuesForInstanceWith @klass, inDifferentElements,
+              nodesInDifferentElements
 
-        matchValuesPart.call @, 'start', 'h1:nth-child(1)', 2, 1
-        # matchValuesPart.call @, 'end', 'p:nth-child(2)', 0, 4
+        matchValuesPart.call @, 'start',  firstElement,   2, 1
+        matchValuesPart.call @, 'end',    secondElement,  0, 4
