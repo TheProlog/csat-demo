@@ -1,6 +1,12 @@
 
 #= require util/gateway
 
+callEndpointSetter = (endpoint, setter) ->
+  selector = endpoint.selector.selector
+  nodeIndex = endpoint.nodeIndex
+  offset = endpoint.offset
+  setter.call @, selector, nodeIndex, offset
+
 formatValidationMessage = (message) ->
   if message.length == 0
     undefined
@@ -8,6 +14,10 @@ formatValidationMessage = (message) ->
     '* ' + message
 
 getForm = -> $('#form1');
+
+getSelectionInstance = (baseSelector) ->
+  ContentSelection = window.meldd_gateway.use 'ContentSelection'
+  new ContentSelection(baseSelector)
 
 getValidatorInstance = (validatorClass, params) ->
   Validator = window.meldd_gateway.use validatorClass
@@ -29,21 +39,16 @@ getEndpointValues = ->
   CsatValueHarvester = window.meldd_gateway.use 'CsatValueHarvester'
   new CsatValueHarvester().values()
 
-# setRangeEndpoint = (endpoint, setter) ->
-#   el = $(endpoint.selector)
-#   setter({container: el[endpoint.nodeIndex], offset: endpoint.offset})
-
-createSelection = ->
+getSelectedContent = ->
   endpoints = getEndpointValues()
-  # r = new $.Range(endpoints.start.selector)
-  # setRangeEndpoint endpoints.start, r.start
-  # setRangeEndpoint endpoints.end, r.end
-  # new $.Range($.Range.current())
-  debug.info 'createSelection needs to be completely rewritten.'
+  selectionObj = getSelectionInstance endpoints.start.baseSelector
+  callEndpointSetter.call selectionObj, endpoints.start, selectionObj.setStart
+  callEndpointSetter.call selectionObj, endpoints.end, selectionObj.setEnd
+  selectionObj.getContent()
 
 selectContent = ->
-  createSelection()
-  $('#alertbox').html('<p>Selected markup would go here.</p>').
+  content = getSelectedContent()
+  $('#alertbox').html(content.escapeHTML()).
       addClass('alert alert-info fade in').alert()
 
 formIsValid = ->

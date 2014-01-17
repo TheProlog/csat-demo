@@ -14,7 +14,7 @@ window.meldd_gateway.register 'CsatNodeIndexFinder', class
 
   getValueBasedOn = (id) ->
     field = demoContainersInstance().form().find(id)
-    field.val().toInt()
+    field.val().toNumber()
 
   constructor: -> ;
 
