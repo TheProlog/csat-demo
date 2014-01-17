@@ -9,9 +9,9 @@ window.meldd_gateway.register 'SelectorCollection', class
 
   _getSelectorsInChild = (baseElement) ->
     ret = []
-    ret.push @builder.selectorFor baseElement
+    ret.add @builder.selectorFor baseElement
     for child in baseElement.children()
-      ret.append _getSelectorsInChild.call(@, $(child))
+      ret.add _getSelectorsInChild.call(@, $(child))
     ret
 
   constructor: (@baseSelector) ->
@@ -24,6 +24,6 @@ window.meldd_gateway.register 'SelectorCollection', class
     #       you'll get handed a jQuery object. This is a CoffeeScript auto-
     #       conversion-during-iteration "feature", not a jQuery bug.
     for child in $(@baseSelector).children()
-      ret.append _getSelectorsInChild.call @, $(child)
+      ret.add _getSelectorsInChild.call @, $(child)
     ret
 

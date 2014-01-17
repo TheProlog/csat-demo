@@ -8,7 +8,7 @@ describe 'User visits landing page and', js: true do
     visit root_path
   end
 
-  it 'submits the form' do
+  xit 'submits the form' do
     within '#start_panel' do
       select 'p:nth-child(2)', from: 'Selector'
       fill_in 'start-nodeindex', with: '0'

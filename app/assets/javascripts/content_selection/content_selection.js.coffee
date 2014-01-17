@@ -4,7 +4,7 @@
 window.meldd_gateway.register 'ContentSelection', class
 
   combineNodesAsString = (contents) ->
-    contents.childNodes.to_a = ->
+    childNodes_to_a = ->
       ret = []
       # childNodes is a NodeList, *not* an Array. Pfffft.
       for index in [0...@length]
@@ -13,7 +13,7 @@ window.meldd_gateway.register 'ContentSelection', class
     func = (p,c,i,a) =>
       newValue = if c.outerHTML then c.outerHTML else c.nodeValue
       p + newValue
-    contents.childNodes.to_a().reduce(func, '')
+    childNodes_to_a.call(contents.childNodes).reduce(func, '')
 
   getSelectionContents = ->
     r1 = document.createRange()

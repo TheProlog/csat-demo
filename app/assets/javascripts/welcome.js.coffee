@@ -25,10 +25,6 @@ window.checkNodeIndex = (field) ->
 window.checkTextOffset = (field) ->
   performValidation field, 'CsatTextOffsetChecker'
 
-showSelectionAlert = ->
-  SelectionAlert = window.meldd_gateway.use 'SelectionAlert'
-  new SelectionAlert().show()
-
 getEndpointValues = ->
   CsatValueHarvester = window.meldd_gateway.use 'CsatValueHarvester'
   new CsatValueHarvester().values()
@@ -46,8 +42,9 @@ createSelection = ->
   debug.info 'createSelection needs to be completely rewritten.'
 
 selectContent = ->
-  showSelectionAlert()
   createSelection()
+  $('#alertbox').html('<p>Selected markup would go here.</p>').
+      addClass('alert alert-info fade in').alert()
 
 formIsValid = ->
   getForm().validationEngine('validate')

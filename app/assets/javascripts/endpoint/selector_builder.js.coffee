@@ -21,5 +21,5 @@ window.meldd_gateway.register 'SelectorBuilder', class
   selectorFor: (element) ->
     parts = [withnthChild element]
     for parent in element.parentsUntil(@baseSelector)
-      parts.append [withnthChild $(parent)]
+      parts.add [withnthChild $(parent)]
     parts.reverse().join ' > '

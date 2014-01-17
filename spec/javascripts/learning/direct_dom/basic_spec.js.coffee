@@ -22,9 +22,8 @@ getSelectionContents = (startSelector, startNodeIndex, startTextOffset,
   r1.setEnd(r2.startContainer.childNodes[endNodeIndex], endTextOffset)
   r1.cloneContents()
 
-combineNodesAsString = (contents_in) ->
-  contents = Object.clone(contents_in)
-  contents.childNodes.to_a = ->
+combineNodesAsString = (contents) ->
+  childNodes_to_a = ->
     ret = []
     # childNodes is a NodeList, *not* an Array. Pfffft.
     for index in [0...@length]
@@ -33,7 +32,7 @@ combineNodesAsString = (contents_in) ->
   func = (p,c,i,a) =>
     newValue = if c.outerHTML then c.outerHTML else c.nodeValue
     p + newValue
-  contents.childNodes.to_a().reduce(func, '')
+  childNodes_to_a.call(contents.childNodes).reduce(func, '')
 
 ################################################################################
 ################################################################################
