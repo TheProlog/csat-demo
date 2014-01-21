@@ -1,23 +1,11 @@
 
 #= require util/gateway
 
-callEndpointSetter = (endpoint, setter) ->
-  selector = endpoint.selector.selector
-  nodeIndex = endpoint.nodeIndex
-  offset = endpoint.offset
-  setter.call @, selector, nodeIndex, offset
-
 formatValidationMessage = (message) ->
   if message.length == 0
     undefined
   else
     '* ' + message
-
-getForm = -> $('#form1');
-
-getSelectionInstance = (baseSelector) ->
-  ContentSelection = window.meldd_gateway.use 'ContentSelection'
-  new ContentSelection(baseSelector)
 
 getValidatorInstance = (validatorClass, params) ->
   Validator = window.meldd_gateway.use validatorClass
@@ -35,34 +23,51 @@ window.checkNodeIndex = (field) ->
 window.checkTextOffset = (field) ->
   performValidation field, 'CsatTextOffsetChecker'
 
-getEndpointValues = ->
-  CsatValueHarvester = window.meldd_gateway.use 'CsatValueHarvester'
-  new CsatValueHarvester().values()
+class CsatWelcomeScreenSetup
 
-getSelectedContent = ->
-  endpoints = getEndpointValues()
-  selectionObj = getSelectionInstance endpoints.start.baseSelector
-  callEndpointSetter.call selectionObj, endpoints.start, selectionObj.setStart
-  callEndpointSetter.call selectionObj, endpoints.end, selectionObj.setEnd
-  selectionObj.getContent()
+  setupForm = (params) ->
+    CsatFormInitialiser = window.meldd_gateway.use 'CsatFormInitialiser'
+    new CsatFormInitialiser().setup(params)
 
-selectContent = ->
-  content = getSelectedContent()
-  $('#alertbox').html(content.escapeHTML()).
-      addClass('alert alert-info fade in').alert()
+  callEndpointSetter = (endpoint, setter) ->
+    selector = endpoint.selector.selector
+    nodeIndex = endpoint.nodeIndex
+    offset = endpoint.offset
+    setter.call @, selector, nodeIndex, offset
 
-formIsValid = ->
-  getForm().validationEngine('validate')
+  getEndpointValues = ->
+    CsatValueHarvester = window.meldd_gateway.use 'CsatValueHarvester'
+    new CsatValueHarvester().values()
 
-buttonHandler = (event) ->
-  event.preventDefault()
-  selectContent() if formIsValid()
+  getSelectionInstance = (baseSelector) ->
+    ContentSelection = window.meldd_gateway.use 'ContentSelection'
+    new ContentSelection(baseSelector)
 
-setupForm = (params) ->
-  CsatFormInitialiser = window.meldd_gateway.use 'CsatFormInitialiser'
-  new CsatFormInitialiser().setup(params)
+  getSelectedContent = ->
+    endpoints = getEndpointValues()
+    selectionObj = getSelectionInstance endpoints.start.baseSelector
+    callEndpointSetter.call selectionObj, endpoints.start, selectionObj.setStart
+    callEndpointSetter.call selectionObj, endpoints.end, selectionObj.setEnd
+    selectionObj.getContent()
+
+  selectContent = ->
+    content = getSelectedContent()
+    $('#alertbox').html(content.escapeHTML()).
+        addClass('alert alert-info fade in').alert()
+
+  formIsValid = ->
+    $('#form').validationEngine('validate')
+
+  defaultButtonHandler = (event) ->
+    event.preventDefault()
+    selectContent() if formIsValid()
+
+  constructor: (params_in = {}) ->
+    handler = params_in.buttonHandler || defaultButtonHandler
+    buttonSelector = params_in.buttonSelector || 'button.btn-primary'
+    setupForm.call @, {handler, selectButton: $(buttonSelector)}
+    $('form').validationEngine()
 
 jQuery ->
-  setupForm {handler: buttonHandler, selectButton: $('button.btn-primary')}
-  getForm().validationEngine()
+  new CsatWelcomeScreenSetup()
   $('#start_selector').focus()
