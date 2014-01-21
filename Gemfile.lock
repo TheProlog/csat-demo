@@ -39,7 +39,7 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
-    childprocess (0.3.9)
+    childprocess (0.4.0)
       ffi (~> 1.0, >= 1.0.11)
     coderay (1.1.0)
     coffee-rails (3.2.2)
@@ -91,6 +91,8 @@ GEM
       slop (~> 3.4)
     pry-rails (0.3.2)
       pry (>= 0.9.10)
+    quiet_assets (1.0.2)
+      railties (>= 3.1, < 5.0)
     rack (1.4.5)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -159,7 +161,7 @@ GEM
       rubyzip (~> 1.0)
       websocket (~> 1.0.4)
     slop (3.4.7)
-    spring (1.0.0)
+    spring (1.1.0)
     spring-commands-rspec (1.0.1)
       spring (>= 0.9.1)
     sprockets (2.2.2)
@@ -204,6 +206,7 @@ DEPENDENCIES
   jquery-rails
   pry
   pry-rails
+  quiet_assets
   rails (= 3.2.16)
   rails-assets-bootstrap
   rails-assets-sugar
