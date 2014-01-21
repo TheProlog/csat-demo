@@ -17,4 +17,4 @@ describe 'CsatFormInitialiser class', ->
       expect(obj.setup).to.be.a 'function'
       expect(obj.setup).to.have.length 1
 
-  it 'needs more specs'
+  it 'needs more specs for code riddled with direct jQuery calls'
