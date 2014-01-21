@@ -1,31 +1,14 @@
 
 #= require util/gateway
 
-class CsatFieldValidationWrapper
-
-  formatValidationMessage = (message) ->
-    if message.length == 0
-      undefined
-    else
-      '* ' + message
-
-  getValidatorInstance = (validatorClass, params) ->
-    Validator = window.meldd_gateway.use validatorClass
-    new Validator(params)
-
-  constructor: -> ;
-
-  setup: (field, validatorClass) ->
-    obj = getValidatorInstance validatorClass, {field}
-    obj.validate()
-    formatValidationMessage obj.message
-
 # actual call has parameter list: (field, rules, i, options) [if we care later]
 window.checkNodeIndex = (field) ->
-  new CsatFieldValidationWrapper().setup field, 'CsatNodeIndexChecker'
+  Wrapper = window.meldd_gateway.use 'CsatFieldValidationWrapper'
+  new Wrapper().setup field, 'CsatNodeIndexChecker'
 
 window.checkTextOffset = (field) ->
-  new CsatFieldValidationWrapper().setup field, 'CsatTextOffsetChecker'
+  Wrapper = window.meldd_gateway.use 'CsatFieldValidationWrapper'
+  new Wrapper().setup field, 'CsatTextOffsetChecker'
 
 class CsatWelcomeScreenSetup
 
