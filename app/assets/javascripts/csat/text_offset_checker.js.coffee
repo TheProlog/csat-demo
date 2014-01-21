@@ -1,7 +1,7 @@
 
 #= require util/gateway
 
-window.meldd_gateway.register 'TextOffsetValidator', class
+window.meldd_gateway.register 'CsatTextOffsetChecker', class
 
   # identical to method in NodeIndexValidator
   createValidator = (params) ->

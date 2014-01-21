@@ -4,18 +4,18 @@
 window.meldd_gateway.register 'BoundedIntegerValidator', class
 
   verifyValueIsNumeric = ->
-    throw 'Value must be a number' if isNaN(@value.toInt())
+    throw 'Value must be a number' if isNaN(@value.toNumber())
 
   verifyValueIsAnInteger = ->
-    throw 'Value must be an integer' if @value.toInt() != @value.toFloat()
+    throw 'Value must be an integer' unless @value.toNumber().isInteger()
 
   verifyValueIsNotNegative = ->
     message = 'Value must not be less than ' + @minValue
-    throw message if @value.toInt() < @minValue
+    throw message if @value.toNumber() < @minValue
 
   verifyValueIsWithinBounds = ->
     message = 'Value must not be greater than ' + @maxValue
-    throw message if @value.toInt() > @maxValue
+    throw message if @value.toNumber() > @maxValue
 
   validators = ->
     [verifyValueIsNumeric,

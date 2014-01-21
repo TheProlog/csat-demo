@@ -18,6 +18,7 @@
 *.sublime-workspace
 *.tmproj
 .sass-cache/
+.idea/
 coverage
 doc/
 docs

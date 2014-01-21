@@ -1,6 +1,6 @@
 
 #= require util/gateway
 
-describe 'NodeIndexValidator class', ->
+describe 'CsatTextOffsetChecker class', ->
 
   it 'needs specs'
